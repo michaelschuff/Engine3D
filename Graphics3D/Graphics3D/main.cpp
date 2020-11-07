@@ -13,19 +13,11 @@
 using namespace std;
 using namespace sf;
 
-template<typename T>
-void print(const T&);
 
 int main(int, char const**) {
     bool isFocused = true;
     int width = 800, height = 600;
-    char* arr = new char[10];
-    uint8_t a = 'z';
-    print(a);
-    
-    unsigned int b = a;
-    cout << b << endl;
-    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/test.bmp");
+    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/Shapes.bmp");
     unsigned int w = img.width(), h = img.height();
     RenderWindow window(VideoMode(w, h), "3D Graphics!");
     window.setFramerateLimit(60);
@@ -48,11 +40,10 @@ int main(int, char const**) {
             pData[i*w+j+1] = img.get(j, i)->r();
             pData[i*w+j+2] = img.get(j, i)->g();
             pData[i*w+j+3] = img.get(j, i)->b();
-            img.get(i%w, i/w)->print();
+//            img.get(j, i)->print();
         }
     }
     texture.update(pData);
-    texture.setRepeated(false);
     Sprite sprite(texture);
     sprite.setTextureRect(IntRect(0,0,w,h));
     while (window.isOpen()) {
@@ -88,10 +79,4 @@ int main(int, char const**) {
     }
 
     return EXIT_SUCCESS;
-}
-
-template<typename T>
-void print(const T& t) {
-    uint16_t a = t;
-    cout << a << endl;
 }

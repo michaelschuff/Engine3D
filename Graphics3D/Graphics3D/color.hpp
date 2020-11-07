@@ -368,14 +368,8 @@ void color::set_RGB_from_fRGB() {
     m_b = 255 * m_fb;
 }
 
-std::string remove_terminating_zeros(std::string str) {
-    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
-    str.erase(str.find_last_not_of('.') + 1, std::string::npos);
-    return str;
-}
-
 std::string color::to_string() const {
-    return ("(" + remove_terminating_zeros(std::to_string(m_r)) + ", " + remove_terminating_zeros(std::to_string(m_g)) + ", " + remove_terminating_zeros(std::to_string(m_b)) + ", " + remove_terminating_zeros(std::to_string(m_a)) + ")");
+    return ("(" + std::to_string(m_r) + ", " + std::to_string(m_g) + ", " + std::to_string(m_b) + ", " + std::to_string(m_a) + ")");
 }
 
 void color::print() const {

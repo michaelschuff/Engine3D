@@ -120,16 +120,16 @@ void image::loadBMPFile(const std::string& file_path) {
         } else if (bih.BitsPerPixel != 24) {
             file.read((char*) &bch, bih.HeaderSize - 40);
             if (bch.AlphaBitMask != 0xff000000 || bch.RedBitMask != 0x00ff0000 || bch.GreenBitMask != 0x0000ff00 || bch.BlueBitMask != 0x000000ff) {
-                throw std::runtime_error("Unexpected color mask format! The program expects the pixel data to be in the BGRA format");
+                throw std::runtime_error("Unexpected color mask format! Expected BGRA format");
             }
             if(bch.ColorSpaceType != 0x73524742) {
-                throw std::runtime_error("Unexpected color space type! The program expects sRGB values");
+                throw std::runtime_error("Unexpected color space type! Expected sRGB values");
             }
         }
         file.seekg(bfh.PixelDataOffset, file.beg);
         
         if (bih.ImageHeight < 0) {
-            throw std::runtime_error("The program can treat only BMP images with the origin in the bottom left corner!");
+            throw std::runtime_error("Haven't implemented negative height yet");
         }
         unsigned int padding = (((32 - ((bih.ImageWidth*bih.BitsPerPixel) % 32)))/8)%4;
         m_width = bih.ImageWidth;
@@ -214,10 +214,10 @@ void image::loadBMPFile(const std::string& file_path) {
                     for (int col = 0; col < bih.ImageWidth; col++) {
                         unsigned int index = row*bih.ImageWidth + col;
                         // padding is 0
-                        data[index] = new color(pixel_data[4*index + row*padding + 3],
+                        data[index] = new color(pixel_data[4*index + row*padding + 1],
                                                 pixel_data[4*index + row*padding + 2],
-                                                pixel_data[4*index + row*padding + 1],
                                                 pixel_data[4*index + row*padding + 0],
+                                                pixel_data[4*index + row*padding + 3],
                                                 COLOR_MODEL::RGB256);
                     }
                 }
