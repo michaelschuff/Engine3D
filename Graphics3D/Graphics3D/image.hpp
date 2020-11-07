@@ -12,9 +12,13 @@
 #include <fstream>
 #include <vector>
 #include "color.hpp"
+
 using namespace std;
+
 namespace ImageFileStructures {
 namespace BMP {
+#pragma pack(push)
+#pragma pack(1)
 struct FileHeader { // 14 bytes
     uint16_t FileType{ 0 };         // 2 bytes
     uint32_t FileSize{ 0 };         // 4 bytes
@@ -22,7 +26,10 @@ struct FileHeader { // 14 bytes
     uint16_t Reserved2{ 0 };        // 2 bytes
     uint32_t PixelDataOffset{ 0 };  // 4 bytes
 };
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(1)
 struct InfoHeader { // 40 bytes
     uint32_t HeaderSize{ 0 };       // 4 bytes
     int32_t ImageWidth{ 0 };        // 4 bytes
@@ -36,7 +43,10 @@ struct InfoHeader { // 40 bytes
     uint32_t TotalColors{ 0 };      // 4 bytes
     uint32_t ImportantColors{ 0 };  // 4 bytes
 };
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(1)
 struct ColorHeader { // optional 84 bytes
     uint32_t RedBitMask{ 0x00ff0000 };      // Bit mask for the red channel
     uint32_t GreenBitMask{ 0x0000ff00 };    // Bit mask for the green channel
@@ -45,6 +55,7 @@ struct ColorHeader { // optional 84 bytes
     uint32_t ColorSpaceType{ 0x73524742 };  // Default "sRGB" (0x73524742)
     std::vector<uint8_t> ColorPallet{ 0 };
 };
+#pragma pack(pop)
 }
 
 }
@@ -86,12 +97,18 @@ unsigned int image::width() {
 unsigned int image::height() {
     return m_height;
 }
+//struct FileHeader { // 14 bytes
+//    uint16_t FileType{ 0 };         // 2 bytes
+//    uint32_t FileSize{ 0 };         // 4 bytes
+//    uint16_t Reserved1{ 0 };        // 2 bytes
+//    uint16_t Reserved2{ 0 };        // 2 bytes
+//    uint32_t PixelDataOffset{ 0 };  // 4 bytes
+//};
 
 void image::loadBMPFile(const std::string& file_path) {
     std::ifstream file(file_path, std::ios::binary);
     if (file) {
         file.read((char*) &bfh, 14);
-        
         if (bfh.FileType != 0x4D42) {
             throw std::runtime_error("Unrecognized file format.");
         }
@@ -109,7 +126,6 @@ void image::loadBMPFile(const std::string& file_path) {
                 throw std::runtime_error("Unexpected color space type! The program expects sRGB values");
             }
         }
-        
         file.seekg(bfh.PixelDataOffset, file.beg);
         
         if (bih.ImageHeight < 0) {
@@ -123,7 +139,6 @@ void image::loadBMPFile(const std::string& file_path) {
         unsigned int data_size = bih.ImageHeight*padding + ceil(num_of_pixels*bih.BitsPerPixel/8.0);
         char* pixel_data = new char[data_size];
         file.read(pixel_data, data_size);
-        cout << bih.Compression << endl;
         switch (bih.BitsPerPixel) {
             case 1: { // 8 pixel indices per byte, each index is 1 bit
                 for (int row = 0; row < bih.ImageHeight; row++) {
@@ -131,11 +146,11 @@ void image::loadBMPFile(const std::string& file_path) {
                         for (int shift = 7; shift >= 0; shift--) {
                             if (8 * (row*bih.ImageWidth + col) < num_of_pixels) {
                                 unsigned int index = row*bih.ImageWidth + col;
-                                unsigned int pallet_index = pixel_data[index + row*padding]>>shift & 1;
+                                uint8_t pallet_index = pixel_data[index + row*padding]>>shift & 1;
                                 data[index + 7-shift] = new color(bch.ColorPallet[4*pallet_index + 2],
                                                                   bch.ColorPallet[4*pallet_index + 1],
                                                                   bch.ColorPallet[4*pallet_index],
-                                                                  COLOR_MODEL::RGB);
+                                                                  COLOR_MODEL::RGB256);
                             }
                         }
                         
@@ -155,7 +170,7 @@ void image::loadBMPFile(const std::string& file_path) {
                         data[index] = new color(bch.ColorPallet[4*pallet_index+2],
                                                 bch.ColorPallet[4*pallet_index+1],
                                                 bch.ColorPallet[4*pallet_index],
-                                                COLOR_MODEL::RGB);
+                                                COLOR_MODEL::RGB16);
                     }
                 }
                 break;
@@ -166,7 +181,7 @@ void image::loadBMPFile(const std::string& file_path) {
                         data[index] = new color(bch.ColorPallet[4*pixel_data[index + row*padding]+2],
                                                 bch.ColorPallet[4*pixel_data[index + row*padding]+1],
                                                 bch.ColorPallet[4*pixel_data[index + row*padding]],
-                                                COLOR_MODEL::RGB);
+                                                COLOR_MODEL::RGB256);
                     }
                 }
                 break;
@@ -179,7 +194,7 @@ void image::loadBMPFile(const std::string& file_path) {
                         data[index] = new color(char1>>3 & 0b00011111,
                                                 (char1<<2 & 0b00011100) | (char2>>6),
                                                 char2>>1 & 0b00011111,
-                                                COLOR_MODEL::RGB);
+                                                COLOR_MODEL::RGB32);
                     }
                 }
                 break;
@@ -190,7 +205,7 @@ void image::loadBMPFile(const std::string& file_path) {
                         data[index] = new color(pixel_data[3*index + row*padding + 2],
                                                 pixel_data[3*index + row*padding + 1],
                                                 pixel_data[3*index + row*padding + 0],
-                                                COLOR_MODEL::RGB);
+                                                COLOR_MODEL::RGB256);
                     }
                 }
                 break;
@@ -203,7 +218,7 @@ void image::loadBMPFile(const std::string& file_path) {
                                                 pixel_data[4*index + row*padding + 2],
                                                 pixel_data[4*index + row*padding + 1],
                                                 pixel_data[4*index + row*padding + 0],
-                                                COLOR_MODEL::RGB);
+                                                COLOR_MODEL::RGB256);
                     }
                 }
                 break;

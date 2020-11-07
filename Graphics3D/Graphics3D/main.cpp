@@ -13,12 +13,19 @@
 using namespace std;
 using namespace sf;
 
+template<typename T>
+void print(const T&);
+
 int main(int, char const**) {
     bool isFocused = true;
     int width = 800, height = 600;
     char* arr = new char[10];
+    uint8_t a = 'z';
+    print(a);
     
-    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/Shapes.bmp");
+    unsigned int b = a;
+    cout << b << endl;
+    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/test.bmp");
     unsigned int w = img.width(), h = img.height();
     RenderWindow window(VideoMode(w, h), "3D Graphics!");
     window.setFramerateLimit(60);
@@ -27,21 +34,23 @@ int main(int, char const**) {
     texture.create(w, h);
     Uint8* pData = new Uint8[4*w*h];
     
-    for (int i = 0; i < w*h; i+=4) {
-        pData[i+0] = img.get(i%w, i/w)->a();
-        pData[i+1] = img.get(i%w, i/w)->r();
-        pData[i+2] = img.get(i%w, i/w)->g();
-        pData[i+3] = img.get(i%w, i/w)->b();
-    }
-    
-//    for (int i = 0; i < h; i++) {
-//        for (int j = 0; j < w; j++) {
-//            pData[i*w+j+0] = img.get(j, i)->a();
-//            pData[i*w+j+1] = img.get(j, i)->r();
-//            pData[i*w+j+2] = img.get(j, i)->g();
-//            pData[i*w+j+3] = img.get(j, i)->b();
-//        }
+//    for (int i = 0; i < w*h; i+=4) {
+//        pData[i+0] = img.get(i%w, i/w)->a();
+//        pData[i+1] = img.get(i%w, i/w)->r();
+//        pData[i+2] = img.get(i%w, i/w)->g();
+//        pData[i+3] = img.get(i%w, i/w)->b();
+//        img.get(i%w, i/w)->print();
 //    }
+    
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++) {
+            pData[i*w+j+0] = img.get(j, i)->a();
+            pData[i*w+j+1] = img.get(j, i)->r();
+            pData[i*w+j+2] = img.get(j, i)->g();
+            pData[i*w+j+3] = img.get(j, i)->b();
+            img.get(i%w, i/w)->print();
+        }
+    }
     texture.update(pData);
     texture.setRepeated(false);
     Sprite sprite(texture);
@@ -79,4 +88,10 @@ int main(int, char const**) {
     }
 
     return EXIT_SUCCESS;
+}
+
+template<typename T>
+void print(const T& t) {
+    uint16_t a = t;
+    cout << a << endl;
 }

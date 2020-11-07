@@ -14,18 +14,20 @@
 
 namespace COLOR_MODEL {
 enum COLOR_MODEL {
-    RGB = 1,
-    fRGB = 2,
-    HSV = 3,
-    CMY = 4
+    RGB16 = 1,
+    RGB32 = 2,
+    RGB256 = 3,
+    fRGB = 4,
+    HSV = 5,
+    CMY = 6
 };
 }
 
 class color {
 private:
-    unsigned char m_r, m_g, m_b;
-    unsigned char m_c, m_y, m_m, m_k;
-    unsigned char m_a;
+    uint16_t m_r, m_g, m_b;
+    uint16_t m_c, m_y, m_m, m_k;
+    uint16_t m_a;
     
     float m_h, m_s, m_v;
     float m_fr, m_fg, m_fb;
@@ -42,14 +44,14 @@ public:
     void set(const T&, const T&, const T&, COLOR_MODEL::COLOR_MODEL);
     template <typename T>
     void set(const T&, const T&, const T&, const T&, COLOR_MODEL::COLOR_MODEL);
-    unsigned char r() const;
-    unsigned char g() const;
-    unsigned char b() const;
-    unsigned char a() const;
-    unsigned char c() const;
-    unsigned char m() const;
-    unsigned char y() const;
-    unsigned char k() const;
+    uint16_t r() const;
+    uint16_t g() const;
+    uint16_t b() const;
+    uint16_t a() const;
+    uint16_t c() const;
+    uint16_t m() const;
+    uint16_t y() const;
+    uint16_t k() const;
     float fr() const;
     float fg() const;
     float fb() const;
@@ -63,7 +65,7 @@ public:
         set(t_1, t_2, t_3, model);
     }
     template <typename T>
-    color(const T& t_1, const T& t_2, const T& t_3, const T& t_a = 255, COLOR_MODEL::COLOR_MODEL model = COLOR_MODEL::RGB) {
+    color(const T& t_1, const T& t_2, const T& t_3, const T& t_a = 255, COLOR_MODEL::COLOR_MODEL model = COLOR_MODEL::RGB256) {
         set(t_1, t_2, t_3, t_a, model);
     }
     
@@ -77,18 +79,18 @@ public:
 };
 
 color& color::operator+=(const color& c) {
-    unsigned char t_r = (m_r+c.r())/2;
-    unsigned char t_g = (m_g+c.g())/2;
-    unsigned char t_b = (m_g+c.b())/2;
+    uint16_t t_r = (m_r+c.r())/2;
+    uint16_t t_g = (m_g+c.g())/2;
+    uint16_t t_b = (m_g+c.b())/2;
     m_a = (m_a+c.a())/2;
-    set(t_r, t_g, t_b, COLOR_MODEL::RGB);
+    set(t_r, t_g, t_b, COLOR_MODEL::RGB256);
     return *this;
 }
 
 color& color::operator-=(const color& c) {
-    unsigned char t_c = (m_c+c.c())/2;
-    unsigned char t_m = (m_m+c.m())/2;
-    unsigned char t_y = (m_y+c.y())/2;
+    uint16_t t_c = (m_c+c.c())/2;
+    uint16_t t_m = (m_m+c.m())/2;
+    uint16_t t_y = (m_y+c.y())/2;
     m_a = (m_a+c.a())/2;
     set(t_c, t_m, t_y, COLOR_MODEL::CMY);
     return *this;
@@ -97,11 +99,11 @@ color& color::operator-=(const color& c) {
 color& color::operator*=(const float& f) {
     if (f > 0) {
         if (f < 1) {
-            set(f*m_r, f*m_g, f*m_b, COLOR_MODEL::RGB);
+            set(f*m_r, f*m_g, f*m_b, COLOR_MODEL::RGB256);
         }
         set(m_c/f, m_m/f, m_y/f, COLOR_MODEL::CMY);
     } else if (f == 0) {
-        set(0, 0, 0, COLOR_MODEL::RGB);
+        set(0, 0, 0, COLOR_MODEL::RGB256);
     } else {
         std::cout << "Cannot multiply color by negative" << std::endl;
     }
@@ -113,7 +115,7 @@ color& color::operator/=(const float& f) {
         if (f < 1) {
             set(f*m_c, f*m_m, f*m_y, COLOR_MODEL::CMY);
         }
-        set(m_r/f, m_g/f, m_b/f, COLOR_MODEL::RGB);
+        set(m_r/f, m_g/f, m_b/f, COLOR_MODEL::RGB256);
     } else if (f == 0) {
         std::cout << "Cannot divide by 0" << std::endl;
     } else {
@@ -124,18 +126,18 @@ color& color::operator/=(const float& f) {
 
 
 color operator+(const color& c1, const color& c2) {
-    unsigned char r = (c1.r() + c2.r())/2;
-    unsigned char g = (c1.g() + c2.g())/2;
-    unsigned char b = (c1.b() + c2.b())/2;
-    unsigned char a = (c1.a() + c2.a())/2;
-    return color(r, g, b, a, COLOR_MODEL::RGB);
+    uint16_t r = (c1.r() + c2.r())/2;
+    uint16_t g = (c1.g() + c2.g())/2;
+    uint16_t b = (c1.b() + c2.b())/2;
+    uint16_t a = (c1.a() + c2.a())/2;
+    return color(r, g, b, a, COLOR_MODEL::RGB256);
 }
 
 color operator-(const color& c1, const color& c2) {
-    unsigned char c = (c1.c() + c2.c())/2;
-    unsigned char m = (c1.m() + c2.m())/2;
-    unsigned char y = (c1.y() + c2.y())/2;
-    unsigned char a = (c1.a() + c2.a())/2;
+    uint16_t c = (c1.c() + c2.c())/2;
+    uint16_t m = (c1.m() + c2.m())/2;
+    uint16_t y = (c1.y() + c2.y())/2;
+    uint16_t a = (c1.a() + c2.a())/2;
     return color(c, m, y, a, COLOR_MODEL::CMY);
 }
 
@@ -163,14 +165,14 @@ bool operator!=(const color& c1, const color& c2) {
     return c1.r()!=c2.r() || c1.g()!=c2.g() || c1.b()!=c2.b();
 }
 
-unsigned char color::r() const { return m_r; }
-unsigned char color::g() const { return m_g; }
-unsigned char color::b() const { return m_b; }
-unsigned char color::a() const { return m_a; }
-unsigned char color::c() const { return m_c; }
-unsigned char color::m() const { return m_m; }
-unsigned char color::y() const { return m_y; }
-unsigned char color::k() const { return m_k; }
+uint16_t color::r() const { return m_r; }
+uint16_t color::g() const { return m_g; }
+uint16_t color::b() const { return m_b; }
+uint16_t color::a() const { return m_a; }
+uint16_t color::c() const { return m_c; }
+uint16_t color::m() const { return m_m; }
+uint16_t color::y() const { return m_y; }
+uint16_t color::k() const { return m_k; }
 float color::fr() const { return m_fr; }
 float color::fg() const { return m_fb; }
 float color::fb() const { return m_fg; }
@@ -182,8 +184,8 @@ float color::v() const { return m_v; }
 template <typename T>
 void color::set(const T& t_1, const T& t_2, const T& t_3, const T& t_a, COLOR_MODEL::COLOR_MODEL model) {
     switch (model) {
-        case COLOR_MODEL::RGB: {
-            m_a = t_a;
+        case COLOR_MODEL::RGB256: {
+            m_a = (uint8_t) t_a;
             m_fa = m_a / 255.0;
             break;
         } case COLOR_MODEL::fRGB: {
@@ -205,10 +207,28 @@ void color::set(const T& t_1, const T& t_2, const T& t_3, const T& t_a, COLOR_MO
 template <typename T>
 void color::set(const T& t_1, const T& t_2, const T& t_3, COLOR_MODEL::COLOR_MODEL model) {
     switch (model) {
-        case COLOR_MODEL::RGB: {
-            m_r = t_1;
-            m_g = t_2;
-            m_b = t_3;
+        case COLOR_MODEL::RGB16: {
+            m_fr = t_1/16.0;
+            m_fg = t_2/16.0;
+            m_fb = t_3/16.0;
+            
+            set_RGB_from_fRGB();
+            set_HSV_from_RGB();
+            set_CYMK_from_RGB();
+            break;
+        } case COLOR_MODEL::RGB32: {
+            m_fr = t_1/32.0;
+            m_fg = t_2/32.0;
+            m_fb = t_3/32.0;
+            
+            set_RGB_from_fRGB();
+            set_HSV_from_RGB();
+            set_CYMK_from_RGB();
+            break;
+        } case COLOR_MODEL::RGB256: {
+            m_r = (uint16_t) t_1;
+            m_g = (uint16_t) t_2;
+            m_b = (uint16_t) t_3;
             
             set_fRGB_from_RGB();
             set_HSV_from_RGB();
@@ -250,9 +270,9 @@ void color::set(const T& t_1, const T& t_2, const T& t_3, COLOR_MODEL::COLOR_MOD
 }
 
 void color::set_HSV_from_RGB() {
-    unsigned char max_chroma = fmax(fmax(m_r, m_g), m_b);
-    unsigned char min_chroma = fmin(fmin(m_r, m_g), m_b);
-    unsigned char delta_chroma = max_chroma - min_chroma;
+    uint16_t max_chroma = fmax(fmax(m_r, m_g), m_b);
+    uint16_t min_chroma = fmin(fmin(m_r, m_g), m_b);
+    uint16_t delta_chroma = max_chroma - min_chroma;
       
     if (delta_chroma == 0) {
         m_h = 0;
