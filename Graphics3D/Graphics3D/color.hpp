@@ -226,9 +226,9 @@ void color::set(const T& t_1, const T& t_2, const T& t_3, COLOR_MODEL::COLOR_MOD
             set_CYMK_from_RGB();
             break;
         } case COLOR_MODEL::RGB256: {
-            m_r = (uint16_t) t_1;
-            m_g = (uint16_t) t_2;
-            m_b = (uint16_t) t_3;
+            m_r = (uint8_t) t_1;
+            m_g = (uint8_t) t_2;
+            m_b = (uint8_t) t_3;
             
             set_fRGB_from_RGB();
             set_HSV_from_RGB();
