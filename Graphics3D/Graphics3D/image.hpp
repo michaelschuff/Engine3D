@@ -97,13 +97,6 @@ unsigned int image::width() {
 unsigned int image::height() {
     return m_height;
 }
-//struct FileHeader { // 14 bytes
-//    uint16_t FileType{ 0 };         // 2 bytes
-//    uint32_t FileSize{ 0 };         // 4 bytes
-//    uint16_t Reserved1{ 0 };        // 2 bytes
-//    uint16_t Reserved2{ 0 };        // 2 bytes
-//    uint32_t PixelDataOffset{ 0 };  // 4 bytes
-//};
 
 void image::loadBMPFile(const std::string& file_path) {
     std::ifstream file(file_path, std::ios::binary);
@@ -114,9 +107,11 @@ void image::loadBMPFile(const std::string& file_path) {
         }
         
         file.read((char*) &bih, 40);
+        std::vector<uint8_t> ColorPallet;
         
         if (bih.BitsPerPixel <= 8) {
-            file.read((char*) &(bch.ColorPallet), 4*bih.TotalColors);
+            bch.ColorPallet.resize(4*bih.TotalColors);
+            file.read((char*) &(ColorPallet), 4*bih.TotalColors);
         } else if (bih.BitsPerPixel != 24) {
             file.read((char*) &bch, bih.HeaderSize - 40);
             if (bch.AlphaBitMask != 0xff000000 || bch.RedBitMask != 0x00ff0000 || bch.GreenBitMask != 0x0000ff00 || bch.BlueBitMask != 0x000000ff) {
@@ -180,7 +175,7 @@ void image::loadBMPFile(const std::string& file_path) {
                         unsigned int index = row*bih.ImageWidth + col;
                         data[index] = new color(bch.ColorPallet[4*pixel_data[index + row*padding]+2],
                                                 bch.ColorPallet[4*pixel_data[index + row*padding]+1],
-                                                bch.ColorPallet[4*pixel_data[index + row*padding]],
+                                                bch.ColorPallet[4*pixel_data[index + row*padding]+0],
                                                 COLOR_MODEL::RGB256);
                     }
                 }
@@ -214,8 +209,8 @@ void image::loadBMPFile(const std::string& file_path) {
                     for (int col = 0; col < bih.ImageWidth; col++) {
                         unsigned int index = row*bih.ImageWidth + col;
                         // padding is 0
-                        data[index] = new color(pixel_data[4*index + row*padding + 1],
-                                                pixel_data[4*index + row*padding + 2],
+                        data[index] = new color(pixel_data[4*index + row*padding + 2],
+                                                pixel_data[4*index + row*padding + 1],
                                                 pixel_data[4*index + row*padding + 0],
                                                 pixel_data[4*index + row*padding + 3],
                                                 COLOR_MODEL::RGB256);

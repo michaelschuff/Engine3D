@@ -17,7 +17,7 @@ using namespace sf;
 int main(int, char const**) {
     bool isFocused = true;
     int width = 800, height = 600;
-    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/Shapes.bmp");
+    image img("/Users/michael/ComputerScience/Engine3D/Graphics3D/Graphics3D/Resources/bmp256.bmp");
     unsigned int w = img.width(), h = img.height();
     RenderWindow window(VideoMode(w, h), "3D Graphics!");
     window.setFramerateLimit(60);
@@ -26,21 +26,12 @@ int main(int, char const**) {
     texture.create(w, h);
     Uint8* pData = new Uint8[4*w*h];
     
-//    for (int i = 0; i < w*h; i+=4) {
-//        pData[i+0] = img.get(i%w, i/w)->a();
-//        pData[i+1] = img.get(i%w, i/w)->r();
-//        pData[i+2] = img.get(i%w, i/w)->g();
-//        pData[i+3] = img.get(i%w, i/w)->b();
-//        img.get(i%w, i/w)->print();
-//    }
-    
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            pData[i*w+j+0] = img.get(j, i)->a();
-            pData[i*w+j+1] = img.get(j, i)->r();
-            pData[i*w+j+2] = img.get(j, i)->g();
-            pData[i*w+j+3] = img.get(j, i)->b();
-//            img.get(j, i)->print();
+            pData[4*((h-i-1)*w+j)+0] = (Uint8) img.get(j, i)->r();
+            pData[4*((h-i-1)*w+j)+1] = (Uint8) img.get(j, i)->g();
+            pData[4*((h-i-1)*w+j)+2] = (Uint8) img.get(j, i)->b();
+            pData[4*((h-i-1)*w+j)+3] = (Uint8) img.get(j, i)->a();
         }
     }
     texture.update(pData);
