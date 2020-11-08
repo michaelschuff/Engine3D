@@ -184,6 +184,16 @@ float color::v() const { return m_v; }
 template <typename T>
 void color::set(const T& t_1, const T& t_2, const T& t_3, const T& t_a, COLOR_MODEL::COLOR_MODEL model) {
     switch (model) {
+        case COLOR_MODEL::RGB16: {
+            m_fa = t_a / 16.0;
+            m_a = (uint8_t) m_fa;
+            break;
+        }
+        case COLOR_MODEL::RGB32: {
+            m_fa = t_a / 32.0;
+            m_a = (uint8_t) m_fa;
+            break;
+        }
         case COLOR_MODEL::RGB256: {
             m_a = (uint8_t) t_a;
             m_fa = m_a / 255.0;
