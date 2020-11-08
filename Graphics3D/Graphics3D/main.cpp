@@ -36,7 +36,7 @@ int main(int, char const**) {
     }
     texture.update(pData);
     Sprite sprite(texture);
-    sprite.setTextureRect(IntRect(0,0,w,h));
+    sprite.setTextureRect(IntRect(0, 0, w, h));
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
