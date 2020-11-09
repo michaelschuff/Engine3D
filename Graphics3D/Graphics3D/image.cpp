@@ -7,12 +7,26 @@
 //
 
 #include "image.hpp"
-#include <fstream>
-#include "color.hpp"
 
+image::image() : data(1, new color()), m_width(1), m_height(1) {
+    
+}
 
 image::image(const std::string& file_path) {
     loadImage(file_path);
+}
+
+image::image(const color& t_c) : data(1, new color(t_c)), m_width(1), m_height(1) {
+    
+}
+
+image::image(const color& t_c,
+             const unsigned int& t_width,
+             const unsigned int& t_height) :
+             data(t_width * t_height, new color(t_c)),
+             m_width(t_width),
+             m_height(t_height) {
+    
 }
 
 void image::loadImage(const std::string& file_path) {
@@ -20,7 +34,21 @@ void image::loadImage(const std::string& file_path) {
 }
 
 color* image::get(const unsigned int& x, const unsigned int& y) {
-    return data[y*m_width + x];
+    if (0<=x && x<m_width && 0<=y && y<m_height) {
+        return data[y*m_width + x];
+    } else {
+        if (0<x) {
+            throw std::out_of_range("Cannot get negative width index of image.");
+        } else if (x >= m_width) {
+            throw std::out_of_range("Cannot get width index greater than image width");
+        } else if (0<y) {
+            throw std::out_of_range("Cannot get negative height index of image.");
+        } else if (y >= m_height) {
+            throw std::out_of_range("Cannot get height index greater than image height");
+        } else {
+            throw std::out_of_range("Cannot get index " + std::to_string(y*m_width + x) + " of image data.");
+        }
+    }
 }
 
 unsigned int image::width() {
@@ -65,8 +93,8 @@ void image::loadBMPFile(const std::string& file_path) {
         int num_of_pixels = bih.ImageWidth * bih.ImageHeight;
         data.resize(num_of_pixels);
         unsigned int data_size = bih.ImageHeight*padding + ceil(num_of_pixels*bih.BitsPerPixel/8.0);
-        char* pixel_data = new char[data_size];
-        file.read(pixel_data, data_size);
+        unsigned char* pixel_data = new unsigned char[data_size];
+        file.read((char*) pixel_data, data_size);
         switch (bih.BitsPerPixel) {
             case 1: { // 8 pixel indices per byte, each index is 1 bit
                 for (int row = 0; row < bih.ImageHeight; row++) {

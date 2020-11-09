@@ -9,6 +9,9 @@
 #ifndef image_hpp
 #define image_hpp
 
+#include <stdio.h>
+#include <fstream>
+#include <vector>
 #include "color.hpp"
 
 
@@ -57,6 +60,9 @@ private:
     ImageFileStructures::BMP::InfoHeader bih;
     ImageFileStructures::BMP::ColorHeader bch;
 public:
+    image();
+    image(const color&);
+    image(const color&, const unsigned int&, const unsigned int&);
     image(const std::string&);
     
     unsigned int width();

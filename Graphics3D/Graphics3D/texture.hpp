@@ -9,38 +9,29 @@
 #ifndef texture_hpp
 #define texture_hpp
 
+#include <stdio.h>
 #include <vector>
 #include <fstream>
 #include "image.hpp"
+#include "color.hpp"
 
 class texture {
 private:
     enum ImageType {
         BMP
-    }
+    };
     ImageType image_type;
     image img;
 public:
-    texture(const string&);
-    texture(const texture &t) : data(t.data), width(t.width), height(t.height) {}
+    texture();
+    texture(const color&);
+    texture(const color&, const unsigned int&, const unsigned int&);
+    texture(const std::string&);
     
-    void ReadBMP(const string&);
+    void ReadBMP(const std::string&);
     
     
-//    color &operator()(const int&, const int&);
+    color* operator()(const unsigned int&, const unsigned int&);
 };
-
-texture::texture(const string &file_path) {
-    switch(file_path.substr(file_path.size() - 4)) {
-        case ".bmp": {
-            bmp_img = BMPimage(file_path);
-        }
-    }
-}
-
-color &texture::operator()(const int &x, const int &y) {
-    switch (
-    return data[y * width + x];
-}
 
 #endif /* texture_hpp */
