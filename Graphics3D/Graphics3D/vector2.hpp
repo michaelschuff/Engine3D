@@ -51,6 +51,7 @@ vector2 operator*(const vector2&, const float&);
 vector2 operator/(const vector2&, const float&);
 vector2 operator%(const vector2&, const float&);
 vector2 operator%(const vector2&, const vector2&);
+bool operator==(const vector2&, const vector2&);
 float dot_product(const vector2&, const vector2&);
 vector2 projection(const vector2&, const vector2&);
 

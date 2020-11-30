@@ -129,6 +129,10 @@ quaternion quaternion::reciprocal() const {
     return conjugate() / square();
 }
 
+void quaternion::normalize() {
+    (*this) /= norm();
+}
+
 quaternion get_quaternion(const vector3 &v1, const vector3 &v2) {
     return quaternion(v1.magnitude() * v2.magnitude() + dot_product(v1, v2), cross_product(v1, v2)).normalized();
 }
@@ -143,10 +147,6 @@ float distance(const quaternion &q1, const quaternion &q2) {
 
 quaternion operator*(const vector3 &v1, const vector3 &v2) {
     return quaternion(-dot_product(v1, v2), cross_product(v1, v2));
-}
-
-void quaternion::normalize() {
-    (*this) /= norm();
 }
 
 static std::string remove_terminating_zeros(std::string str) {

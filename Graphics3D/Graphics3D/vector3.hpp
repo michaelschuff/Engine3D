@@ -37,12 +37,12 @@ public:
     std::string to_string() const;
     void print() const;
     
-    vector3 &operator+=(const vector3&);
-    vector3 &operator-=(const vector3&);
-    vector3 &operator*=(const float&);
-    vector3 &operator/=(const float&);
-    vector3 &operator%=(const float&);
-    vector3 &operator%=(const vector3&);
+    vector3& operator+=(const vector3&);
+    vector3& operator-=(const vector3&);
+    vector3& operator*=(const float&);
+    vector3& operator/=(const float&);
+    vector3& operator%=(const float&);
+    vector3& operator%=(const vector3&);
     float& operator[](const int&);
 };
 

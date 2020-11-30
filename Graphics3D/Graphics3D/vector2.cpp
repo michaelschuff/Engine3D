@@ -74,6 +74,10 @@ float& vector2::operator[](const int& i) {
     throw std::out_of_range("Expected value between 0 and 2, got " + std::to_string(i));
 }
 
+bool operator==(const vector2& v1, const vector2& v2) {
+    return v1.x == v2.x && v1.y == v2.y;
+}
+
 vector2& vector2::operator+=(const vector2& v) {
     x += v.x;
     y += v.y;
