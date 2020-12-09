@@ -17,9 +17,13 @@ class quaternion {
 public:
     float w, x, y, z;
     
-    quaternion(const float &t_w, const float &t_x, const float &t_y, const float &t_z) : w(t_w), x(t_x), y(t_y), z(t_z) {}
-    quaternion(const float &k, const vector3 &v) : w(k), x(v.x), y(v.y), z(v.z) {}
-    quaternion(const vector3 &v) : w(0), x(v.x), y(v.y), z(v.z) {}
+    quaternion();
+    quaternion(const float&,
+               const float&,
+               const float&,
+               const float&);
+    quaternion(const float&, const vector3&);
+    quaternion(const vector3&);
     
     void normalize();
     
@@ -41,5 +45,18 @@ public:
     std::string to_string() const;
     void print() const;
 };
+
+quaternion operator+(const quaternion&, const quaternion&);
+quaternion operator-(const quaternion&, const quaternion&);
+quaternion operator*(const quaternion&, const float&);
+quaternion operator*(const float&, const quaternion&);
+quaternion operator*(const quaternion&, const quaternion&);
+quaternion operator/(const quaternion&, const float&);
+quaternion operator-(const quaternion&);
+
+quaternion get_quaternion(const vector3&, const float&);
+quaternion get_quaternion(const vector3&, const vector3&);
+float distance(const quaternion&, const quaternion&);
+quaternion operator*(const vector3&, const vector3&);
 
 #endif /* quaternion_hpp */

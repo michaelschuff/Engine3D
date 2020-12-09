@@ -88,15 +88,15 @@ namespace ImageFileStructures {
             uint32_t ImportantColors{ 0 };          // 4 bytes
             
             // V2 - 52 bytes
-            uint32_t RedBitmask{ 0 };               // 4 bytes
-            uint32_t GreenBitmask{ 0 };             // 4 bytes
-            uint32_t BlueBitmask{ 0 };              // 4 bytes
+            uint32_t RedBitmask{ 0x00ff0000 };      // 4 bytes
+            uint32_t GreenBitmask{ 0x0000ff00 };    // 4 bytes
+            uint32_t BlueBitmask{ 0x000000ff };     // 4 bytes
             
             // V3 - 56 bytes
-            uint32_t AlphaBitmask{ 0 };             // 4 bytes
+            uint32_t AlphaBitmask{ 0xff000000 };    // 4 bytes
             
             // V4 - 108 bytes
-            uint32_t ColorSpaceType{ 0 };           // 4 bytes
+            uint32_t ColorSpaceType{ 0x73524742 };  // 4 bytes
             ColorEndPoint ColorEndpoints[3];        // 36 bytes
             uint32_t RedGamma{ 0 };                 // 4 bytes
             uint32_t GreenGamma{ 0 };               // 4 bytes

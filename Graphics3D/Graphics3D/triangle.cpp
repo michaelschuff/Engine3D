@@ -110,6 +110,27 @@ vector3& triangle::operator[](const int& i) {
     throw std::out_of_range("Expected value between 0 and 3, got " + std::to_string(i));
 }
 
+triangle& triangle::operator+=(const vector3& v) {
+    v1 += v;
+    v2 += v;
+    v3 += v;
+    return *this;
+}
+
+triangle& triangle::operator-=(const vector3& v) {
+    v1 -= v;
+    v2 -= v;
+    v3 -= v;
+    return *this;
+}
+
+triangle& triangle::operator*=(const quaternion& q) {
+    v1 *= q;
+    v2 *= q;
+    v3 *= q;
+    return *this;
+}
+
 float triangle::A() const {
     return (v3 - v2).magnitude();
 }
@@ -168,22 +189,28 @@ triangle triangle::rotated(const quaternion& q) const {
                     normal.rotated(q));
 }
 
-void triangle::rotate(const vector3& axis, const float& theta) {
+void triangle::rotate(const vector3& axis,
+                      const float& theta) {
     rotate(quaternion(cos(theta/2), axis.normalized() * sin(theta)/2));
 }
 
-triangle triangle::rotated(const vector3& axis, const float& theta) const {
+triangle triangle::rotated(const vector3& axis,
+                           const float& theta) const {
     return rotated(quaternion(cos(theta/2), axis.normalized() * sin(theta)/2));
 }
 
-void triangle::rotate(const vector3& axis, const float& theta, const vector3& origin) {
+void triangle::rotate(const vector3& axis,
+                      const float& theta,
+                      const vector3& origin) {
     v1.rotate(axis, theta, origin);
     v2.rotate(axis, theta, origin);
     v3.rotate(axis, theta, origin);
     normal.rotate(axis, theta, origin);
 }
 
-triangle triangle::rotated(const vector3& axis, const float& theta, const vector3& origin) const {
+triangle triangle::rotated(const vector3& axis,
+                           const float& theta,
+                           const vector3& origin) const {
     return triangle(v1.rotated(axis, theta, origin),
                     v2.rotated(axis, theta, origin),
                     v3.rotated(axis, theta, origin),
@@ -196,4 +223,26 @@ std::string triangle::to_string() const {
 
 void triangle::print() const {
     std::cout << (*this).to_string() << std::endl;
+}
+
+
+triangle operator+(const vector3& v, const triangle& tri) {
+    return triangle(tri.v1 + v, tri.v2 + v, tri.v3 + v);
+}
+
+triangle operator+(const triangle& tri, const vector3& v) {
+    return triangle(tri.v1 + v, tri.v2 + v, tri.v3 + v);
+}
+
+triangle operator-(const triangle& tri, const vector3& v) {
+    return triangle(tri.v1 - v, tri.v2 - v, tri.v3 - v);
+}
+
+triangle operator*(const triangle& tri, const quaternion& q) {
+    return triangle(tri.v1 * q, tri.v2 * q, tri.v3 * q);
+}
+
+triangle operator*(const quaternion& q, const triangle& tri) {
+    return triangle(tri.v1 * q, tri.v2 * q, tri.v3 * q);
+    
 }

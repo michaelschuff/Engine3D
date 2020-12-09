@@ -36,6 +36,14 @@ vector3 operator*(const vector3& v, const float& k) {
     return vector3(k*v.x, k*v.y, k*v.z);
 }
 
+vector3 operator*(const vector3& v, const quaternion& q) {
+    return v.rotated(q);
+}
+
+vector3 operator*(const quaternion& q, const vector3& v) {
+    return v.rotated(q);
+}
+
 vector3 operator/(const vector3& v, const float& k) {
     if (k != 0) {
         return vector3(v.x/k, v.y/k, v.z/k);
@@ -98,6 +106,11 @@ vector3& vector3::operator*=(const float& k) {
     x *= k;
     y *= k;
     z *= k;
+    return *this;
+}
+
+vector3& vector3::operator*=(const quaternion& q) {
+    rotate(q);
     return *this;
 }
 

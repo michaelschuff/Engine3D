@@ -40,6 +40,7 @@ public:
     vector3& operator+=(const vector3&);
     vector3& operator-=(const vector3&);
     vector3& operator*=(const float&);
+    vector3& operator*=(const quaternion&);
     vector3& operator/=(const float&);
     vector3& operator%=(const float&);
     vector3& operator%=(const vector3&);
@@ -51,6 +52,8 @@ vector3 operator-(const vector3&, const vector3&);
 vector3 operator-(const vector3&);
 vector3 operator*(const float&, const vector3&);
 vector3 operator*(const vector3&, const float&);
+vector3 operator*(const vector3&, const quaternion&);
+vector3 operator*(const quaternion&, const vector3&);
 vector3 operator/(const vector3&, const float&);
 vector3 operator%(const vector3&, const float&);
 vector3 operator%(const vector3&, const vector3&);

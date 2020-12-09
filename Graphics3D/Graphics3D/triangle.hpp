@@ -55,6 +55,15 @@ public:
     void print() const;
     
     vector3& operator[](const int&);
+    triangle& operator+=(const vector3&);
+    triangle& operator-=(const vector3&);
+    triangle& operator*=(const quaternion&);
 };
+
+triangle operator+(const vector3& v, const triangle& tri);
+triangle operator+(const triangle& tri, const vector3& v);
+triangle operator-(const triangle& tri, const vector3& v);
+triangle operator*(const triangle& tri, const quaternion& q);
+triangle operator*(const quaternion& q, const triangle& tri);
 
 #endif /* triangle_hpp */

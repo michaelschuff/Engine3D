@@ -63,10 +63,21 @@ void image::loadBMPFile(const std::string& file_path) {
         uint32_t header_size;
         file.read((char*) &header_size, 4);
         file.seekg(14, file.beg);
-        if (header_size == 12 || header_size == 64) {
+        if (header_size == 64) {
             file.read((char*) &core_header, header_size);
-            //translate Core Header to Info Header
-        } else if (header_size == 40 ||
+            info_header.HeaderSize = core_header.HeaderSize;
+            info_header.ImageWidth = core_header.ImageWidth;
+            info_header.ImageHeight = core_header.ImageHeight;
+            info_header.Planes = core_header.Planes;
+            info_header.BitsPerPixel = core_header.BitsPerPixel;
+            info_header.Compression = core_header.Compression;
+            info_header.ImageSize = core_header.ImageSize;
+            info_header.XpixelsPerMeter = core_header.XResolution;
+            info_header.YpixelsPerMeter = core_header.YResolution;
+            info_header.TotalColors = core_header.TotalColors;
+            info_header.ImportantColors = core_header.ImportantColors;
+        } else if (header_size == 12 || // 12 bytes is core_header, but first 12 bytes is identical in core and info
+                   header_size == 40 ||
                    header_size == 52 ||
                    header_size == 56 ||
                    header_size == 108 ||
@@ -82,12 +93,46 @@ void image::loadBMPFile(const std::string& file_path) {
             if (info_header.TotalColors == 0) {
                 info_header.TotalColors = 1 << info_header.BitsPerPixel;
             }
+            std::vector<int> mask_ids;
+            for (int i = 0; i < 32; i++) {
+                if ((info_header.RedBitmask >> i) & 1) {
+                    mask_ids.push_back(0);
+                } else if ((info_header.GreenBitmask >> i) & 1) {
+                    mask_ids.push_back(1);
+                } else if ((info_header.BlueBitmask >> i) & 1) {
+                    mask_ids.push_back(2);
+                } else if ((info_header.AlphaBitmask >> i) & 1) {
+                    mask_ids.push_back(3);
+                } else {
+                    mask_ids.push_back(4);
+                }
+            }
             for (int i = 0; i < info_header.TotalColors; i++) {
-                char r, g, b, a;
-                file.read(&b, 1);
-                file.read(&g, 1);
-                file.read(&r, 1);
-                file.read(&a, 1);
+                uint32_t c;
+                file.read((char*) &c, 4);
+                unsigned int r_c = 0, g_c = 0, b_c = 0, a_c = 0;
+                unsigned int r = 0, g = 0, b = 0, a = 0;
+                for (int j = 0; j < mask_ids.size(); j++) {
+                    switch(mask_ids[j]) {
+                        case 0: {
+                            r += ((c>>j)&1)<<r_c;
+                            r_c++;
+                            break;
+                        } case 1: {
+                            g += ((c>>j)&1)<<g_c;
+                            g_c++;
+                            break;
+                        } case 2: {
+                            b += ((c>>j)&1)<<b_c;
+                            b_c++;
+                            break;
+                        } case 3: {
+                            a += ((c>>j)&1)<<a_c;
+                            a_c++;
+                            break;
+                        }
+                    }
+                }
                 ColorPallet.push_back(color(r, g, b, COLOR_MODEL::RGB256));
             }
         } else if (info_header.BitsPerPixel != 24) {
